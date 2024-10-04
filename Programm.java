@@ -29,7 +29,7 @@ class Book {
     private String genre;
     private String price;
     private String isbn;
-    private Publisher publisher; // Изменяем тип на Publisher
+    private Publisher publisher;
     private String language;
     private String awards;
 
@@ -40,7 +40,7 @@ class Book {
     public void setGenre(String genre) { this.genre = genre; }
     public void setPrice(String price) { this.price = price; }
     public void setIsbn(String isbn) { this.isbn = isbn; }
-    public void setPublisher(Publisher publisher) { this.publisher = publisher; } // Сеттер для Publisher
+    public void setPublisher(Publisher publisher) { this.publisher = publisher; }
     public void setLanguage(String language) { this.language = language; }
     public void setAwards(String awards) { this.awards = awards; }
 
@@ -53,7 +53,7 @@ class Book {
                 ", genre='" + genre + '\'' + "\n" +
                 ", price='" + price + '\'' + "\n" +
                 ", isbn='" + isbn + '\'' + "\n" +
-                ", publisher=" + publisher + // Изменено для вывода объекта Publisher
+                ", publisher=" + publisher +
                 ", language='" + language + '\'' + "\n" +
                 ", awards='" + awards + '\'' + "\n" +
                 '}';
@@ -62,7 +62,7 @@ class Book {
 
 public class Programm {
     public static void main(String[] args) {
-        String filePath = "D:/random_structure_14.xml"; // Укажите правильный путь к файлу
+        String filePath = "D:/random_structure_14.xml";
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             StringBuilder sb = new StringBuilder();
@@ -70,12 +70,11 @@ public class Programm {
 
             // Читаем весь файл в одну строку
             while ((line = br.readLine()) != null) {
-                sb.append(line.trim()); // Удаляем лишние пробелы и добавляем в StringBuilder
+                sb.append(line.trim());
             }
 
-            String xmlContent = sb.toString(); // Получаем полное содержимое XML
+            String xmlContent = sb.toString();
 
-            // Парсим книги из полученной строки
             parseBooks(xmlContent);
         } catch (IOException e) {
             e.printStackTrace();
@@ -90,7 +89,7 @@ public class Programm {
 
         while ((startIndex = xmlContent.indexOf(bookTagStart, startIndex)) != -1) {
             int endIndex = xmlContent.indexOf(bookTagEnd, startIndex);
-            if (endIndex == -1) break; // Проверяем, что конец книги найден
+            if (endIndex == -1) break;
             endIndex += bookTagEnd.length();
             String bookContent = xmlContent.substring(startIndex, endIndex);
             Book currentBook = new Book();
@@ -100,15 +99,14 @@ public class Programm {
             currentBook.setAuthor(extractContent(bookContent, "author"));
             currentBook.setYear(Integer.parseInt(extractContent(bookContent, "year")));
             currentBook.setGenre(extractContent(bookContent, "genre"));
-            currentBook.setPrice(extractPrice(bookContent)); // Изменение для извлечения цены
+            currentBook.setPrice(extractPrice(bookContent));
             currentBook.setIsbn(extractContent(bookContent, "isbn"));
-            currentBook.setPublisher(extractPublisher(bookContent)); // Изменение для извлечения Publisher
+            currentBook.setPublisher(extractPublisher(bookContent));
             currentBook.setLanguage(extractContent(bookContent, "language"));
             currentBook.setAwards(extractAwards(bookContent));
 
-            System.out.println(currentBook); // Выводим информацию о книге
+            System.out.println(currentBook);
 
-            // Обновляем индекс для следующего поиска
             startIndex = endIndex;
         }
     }
@@ -117,10 +115,10 @@ public class Programm {
         String startTag = "<" + tag + ">";
         String endTag = "</" + tag + ">";
         int startIndex = content.indexOf(startTag);
-        if (startIndex == -1) return ""; // Если тег не найден
+        if (startIndex == -1) return "";
         startIndex += startTag.length();
         int endIndex = content.indexOf(endTag, startIndex);
-        if (endIndex == -1) return ""; // Если тег не найден
+        if (endIndex == -1) return "";
         return content.substring(startIndex, endIndex).trim();
     }
 
@@ -128,11 +126,11 @@ public class Programm {
         String startTag = "<price";
         String endTag = "</price>";
         int startIndex = content.indexOf(startTag);
-        if (startIndex == -1) return ""; // Если тег не найден
+        if (startIndex == -1) return "";
 
-        int valueStartIndex = content.indexOf(">", startIndex) + 1; // Найти символ '>'
+        int valueStartIndex = content.indexOf(">", startIndex) + 1;
         int valueEndIndex = content.indexOf(endTag, valueStartIndex);
-        if (valueEndIndex == -1) return ""; // Если тег не найден
+        if (valueEndIndex == -1) return "";
 
         return content.substring(valueStartIndex, valueEndIndex).trim();
     }
@@ -142,13 +140,12 @@ public class Programm {
         String startTag = "<publisher>";
         String endTag = "</publisher>";
         int startIndex = content.indexOf(startTag);
-        if (startIndex == -1) return publisher; // Если тег не найден
+        if (startIndex == -1) return publisher;
         int endIndex = content.indexOf(endTag, startIndex);
-        if (endIndex == -1) return publisher; // Если тег не найден
+        if (endIndex == -1) return publisher;
 
         String publisherContent = content.substring(startIndex, endIndex);
 
-        // Извлекаем данные о publisher
         publisher.setName(extractContent(publisherContent, "name"));
         publisher.setCity(extractContent(publisherContent, "city"));
         publisher.setCountry(extractContent(publisherContent, "country"));
@@ -164,14 +161,13 @@ public class Programm {
 
         while ((startIndex = content.indexOf(startTag, startIndex)) != -1) {
             int endIndex = content.indexOf(endTag, startIndex);
-            if (endIndex == -1) break; // Если тег не найден
+            if (endIndex == -1) break; 
             awards.append(extractContent(content.substring(startIndex, endIndex + endTag.length()), "award")).append(", ");
             startIndex = endIndex + endTag.length();
         }
 
-        // Убираем последнюю запятую и пробел
         if (awards.length() > 0) {
-            awards.setLength(awards.length() - 2); // Удаление ", "
+            awards.setLength(awards.length() - 2);
         }
         return awards.toString();
     }
